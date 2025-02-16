@@ -55,16 +55,60 @@ I am using a Linux machine as my root CA and will be generating all the necessar
 
 **Find 'clients radsec {' and configure the client details or it should look like the below after editing**
 
+**NOTE: Make sure the secret should be set to radsec in both server and client.**
+
 ```
 clients radsec {
        client mikrotik {
                ipaddr = 192.168.10.1
                proto = tls
-               virtual_server = default
+               secret = radsec
        }
 ```
-**Don't forget to copy your certificate files and keys which you just created in your Linux machine to your server. After copying the required CA, certificate and key files in your server change the default path in the tls file.**
+**Don't forget to copy your certificate files and keys which you just created in your Linux machine to your server. After copying the required CA, certificate and key files in your server, change the default path in the tls file.**
 
 ```
-
+tls{
+    private_key_file = /etc/ssl/private/server2-key.pem
+    .
+    .
+    certificate_file = /etc/ssl/certs/server2-cert.pem
+    .
+    .
+    ca_file = /etc/ssl/certs/ca-cert.pem
+}
 ```
+
+### Edit the /etc/freeradius/3.0/sites-enabled/default file so that the beginning of the authorize and preacct sections looks as follows:
+```
+authorize {
+    accept
+    ...
+}
+...
+preacct {
+    handled
+    ...
+}
+```
+
+### Start freeradius in debug mode 
+```freeradius -X OR freeradius -fxxl /dev/stdout```
+
+# Radsec Client Configuration
+I have used a mikrotik router as a radius client in my case and the configuration is simple and straightforward. 
+
+**Step 1-** Copy the client certificate, key and CA into mikrotik files.
+
+**Step 2-** Go into Certificates > Import > import the client certificate, key, and CA file.
+
+**Step 3-** Go into RADIUS and configure address of your radsec server, protocol to radsec, secret to "radsec", authentication and accounting ports to 2083, and lastly select the client certificate + key pair you just added.
+
+# Troubleshooting
+Always restart the freeradius service after making changes in the configuration files and stop the service to into debug mode.
+
+PRO TIP- Sometimes the freeradius service would not restart due to several issues. At this time, just restart the machine to automatically start the freeradius after bootup.
+# Conclusion
+This setup provides a secure RADIUS authentication mechanism over TLS. RadSec ensures encrypted communication, improving security over traditional RADIUS setups.
+
+### If this project helped you, give it a ⭐ and contribute by submitting issues or pull requests!

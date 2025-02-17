@@ -91,7 +91,21 @@ preacct {
     ...
 }
 ```
+### Edit /etc/freeradius/3.0/clients.conf to look like below
+```
+client mikrotik {
+        ipaddr = 192.168.10.1
+        secret = radsec
+        require_client_certificate = yes
+        ca_file = /etc/ssl/certs/ca-cert.pem
+}
+```
 
+### Edit /etc/freeradius/3.0/users to look like below
+```
+tester Cleartext-Password := "tester123"
+# all users here
+```
 ### Start freeradius in debug mode 
 ```freeradius -X OR freeradius -fxxl /dev/stdout```
 

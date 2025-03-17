@@ -107,7 +107,15 @@ tester Cleartext-Password := "tester123"
 # all users here
 ```
 ### Start freeradius in debug mode 
-```freeradius -X OR freeradius -fxxl /dev/stdout```
+```sudo freeradius -X OR sudo freeradius -fxxl /dev/stdout```
+
+If you run into issues, just restart and stop the freeradius service and then try to put it into debug mode
+
+```sudo service freeradius restart```
+
+```sudo service freeradius stop```
+
+```sudo freeradius -X OR sudo freeradius -fxxl /dev/stdout```
 
 # Radsec Client Configuration
 I have used a mikrotik router as a radius client in my case and the configuration is simple and straightforward. 
